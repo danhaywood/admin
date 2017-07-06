@@ -2,6 +2,9 @@ today=$(date +"%d %b %Y")
 to_default=$(date -d "$today" +"01 %b %Y")
 from_default=$(date -d "$to_default -1 month" +"%d %b %Y")
 
+DEV_HOME="/c/dev"
+file="$DEV_HOME/_repos.txt"
+
 
 read -p "from? ($from_default): " from
 read -p "to  ? ($to_default): " to
@@ -16,16 +19,15 @@ echo "" >&2
 
 echo "repo,who,yyyy-mm-dd,day,date,descr" > /tmp/$$
 
-for a in `cat gitlog.txt`
+for a in `cat $file | grep -v ^# `
 do  
-	repo=`echo $a | cut -d: -f1`
-	repodir=`echo $a | cut -d: -f2`
+	repodir=`echo $a`
 
 	pushd $repodir >/dev/null
     if [ $? -ne 0 ]; then
         echo "$repodir not cloned..."
     else
-	    git log --since="$from" --until="$to" --pretty=format:'%cn,%ai,%aD,"%s"' | sed "s/^/${repo},/" >>/tmp/$$
+	    git log --since="$from" --until="$to" --pretty=format:'%cn,%ai,%aD,"%s"' | sed "s/^/${repodir},/" >>/tmp/$$
 
 	    popd >/dev/null
 	    echo "" >>/tmp/$$
@@ -37,12 +39,6 @@ done
 
 cat /tmp/$$ | sort -k3 | grep -v "^$"
 
-#for a in `cat gitlog.txt`
-#do  
-	#repo=`echo $a | cut -d: -f1`
-	#rm /tmp/$$.$repo
-#done
-#
 rm /tmp/$$
 
 

@@ -1,1 +1,28 @@
-= Admin stuff...
+= Admin
+
+Monthly reporting
+
+* ensure all local repos are clean:
++
+[source]
+====
+eachrepo git status --porcelain
+eachrepo diff
+eachrepo git pull --ff-only
+====
+
+* clone/fetch any new repos:
++
+[source]
+====
+sh ~/bin/fetch.sh
+====
++
+NB: this will preserve any existing.
+
+* report using gitlog.sh (in this repo):
++
+[source]
+====
+sh gitlog.sh > /c/tmp/gitlog.csv
+====
